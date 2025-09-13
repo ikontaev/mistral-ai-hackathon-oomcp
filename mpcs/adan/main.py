@@ -399,5 +399,4 @@ def read_csv(csv_content_base64: str, max_preview_rows: int = 5) -> str:
 if __name__ == "__main__":
     print("🚀 Starting OOMCP Server...")
     print(f"📍 Working directory: {current_working_dir}")
-    mcp.run(transport="http", host="127.0.0.1", port=8000)
-    mcp.run(transport="http", host="127.0.0.1", port=8001)
+    mcp.run(transport="http", host="0.0.0.0", port=8000)
