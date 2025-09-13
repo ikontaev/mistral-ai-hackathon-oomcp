@@ -35,17 +35,12 @@
         dest: /etc/apt/keyrings/docker.asc
         mode: '0644'
 
-    - name: Get Ubuntu codename
-      ansible.builtin.command: . /etc/os-release && echo "$UBUNTU_CODENAME"
-      register: ubuntu_codename
-      changed_when: false
-
     - name: Add Docker repository
       ansible.builtin.apt_repository:
         repo: >-
-          deb [arch={{ ansible_architecture }} signed-by=/etc/apt/keyrings/docker.asc]
+          deb [arch=x86_64 signed-by=/etc/apt/keyrings/docker.asc]
           https://download.docker.com/linux/ubuntu
-          {{ ubuntu_codename.stdout }} stable
+          noble stable
         state: present
         filename: docker
         update_cache: yes
