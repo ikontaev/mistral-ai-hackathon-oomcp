@@ -80,7 +80,7 @@
         - "{{ app_data_path }}"
 
     - name: Stop and remove existing containers
-      community.docker.docker_compose:
+      community.docker.docker_compose_v2:
         project_src: "/opt/{{ app_name }}"
         state: absent
       ignore_errors: yes
@@ -101,7 +101,7 @@
       delay: 10
 
     - name: Deploy containers
-      community.docker.docker_compose:
+      community.docker.docker_compose_v2:
         project_src: "/opt/{{ app_name }}"
         state: present
         pull: yes
