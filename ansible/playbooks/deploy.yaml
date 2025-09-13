@@ -38,7 +38,7 @@
     - name: Add Docker repository
       ansible.builtin.apt_repository:
         repo: >-
-          deb [arch=x86_64 signed-by=/etc/apt/keyrings/docker.asc]
+          deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc]
           https://download.docker.com/linux/ubuntu
           noble stable
         state: present
