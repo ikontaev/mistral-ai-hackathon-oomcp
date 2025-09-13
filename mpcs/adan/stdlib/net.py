@@ -1,16 +1,9 @@
 from fastmcp import FastMCP
 import os
-import subprocess
 import json
-import shutil
-import glob
-from pathlib import Path
-import tempfile
-import sys
 import socket
 from threading import Thread
-import time
-import stdlib
+import httpx
 
 def register(mcp): 
     @mcp.tool
@@ -51,4 +44,42 @@ def register(mcp):
             return f"✔️ HTTP server started on port {port} serving directory: {directory}\nAccess at: http://localhost:{port}"
         except Exception as e:
             return f"❌ Error starting HTTP server: {str(e)}"
+            
+    @mcp.tool
+    def fetch(url: str, method: str = "GET", headers: str = None, data: str = None) -> str:
+        """Fetch data from a URL using httpx - returns response as text"""
+        try:
+            request_headers = {}
+            if headers:
+                try:
+                    request_headers = json.loads(headers)
+                except json.JSONDecodeError:
+                    return "❌ Error: headers must be valid JSON string"
+
+            request_data = None
+            if data:
+                request_data = data
+
+            with httpx.Client(timeout=30.0) as client:
+                response = client.request(
+                    method=method.upper(),
+                    url=url,
+                    headers=request_headers,
+                    content=request_data,
+                )
+
+            content = response.text
+            result = {
+                "status": response.status_code,
+                "headers": dict(response.headers),
+                "content": content,
+                "content_length": len(content),
+            }
+
+            return json.dumps(result, indent=2)
+
+        except httpx.HTTPError as e:
+            return f"❌ HTTP Error: {str(e)}"
+        except Exception as e:
+            return f"❌ Error fetching URL: {str(e)}"
 
