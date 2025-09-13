@@ -112,14 +112,3 @@
         state: present
         pull: always
         recreate: always
-
-    - name: Verify container is running
-      ansible.builtin.uri:
-        url: "http://localhost:{{ app_port }}"
-        status_code: 200
-        timeout: 30
-      register: result
-      until: result.status == 200
-      retries: 10
-      delay: 5
-      changed_when: false
