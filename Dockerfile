@@ -1,16 +1,17 @@
 FROM python:3.12-slim
 
-WORKDIR /app
-
-# Install uv using the official install script
+# Install uv and add to PATH
+ENV PATH="/root/.cargo/bin:${PATH}"
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+WORKDIR /app
 
 # Copy requirements first for better layer caching
 COPY mpcs/adan/pyproject.toml mpcs/adan/
 COPY mpcs/adan/uv.lock mpcs/adan/
 
 # Install dependencies using uv
-RUN ~/.cargo/bin/uv pip install --system -e /app/mpcs/adan
+RUN uv pip install --system -e /app/mpcs/adan
 
 # Copy the rest of the application
 COPY . /app
