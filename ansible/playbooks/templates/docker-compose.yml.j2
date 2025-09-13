@@ -32,6 +32,7 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
+      - SECRET_JUPYTER_TOKEN={{ jupyter_token | default('default_fallback_token', true) }}
     volumes:
       - {{ app_data_path }}:/app/data
       - shared_data:/app
@@ -56,6 +57,7 @@ services:
       - NB_GID=0
       - CHOWN_HOME=yes
       - CHOWN_HOME_OPTS=-R
+      - SECRET_JUPYTER_TOKEN={{ jupyter_token | default('default_fallback_token', true) }}
     volumes:
       - jupyter_data:/home/jupyter/work
       - shared_data:/home/jupyter/shared
@@ -65,6 +67,7 @@ services:
       --ip=0.0.0.0
       --port=8888
       --notebook-dir=/home/jupyter/app
+      --ServerApp.token={{ jupyter_token | default('default_fallback_token', true) }}
       --ServerApp.allow_remote_access=True
       --ServerApp.allow_origin='*'
       --ServerApp.base_url=/
