@@ -8,6 +8,20 @@ if str(ROOT) not in sys.path:
 from mpcs.adan.stdlib import storage
 
 def handle(req):
-    storage._put("sample", "{\"value\": 42}")
-    val = storage._get("sample")
-    return f"ok:{val}"
+    if req.query["method"] == "put": 
+        key = req.query["key"] 
+        value = req.query["value"] 
+        storage._put(key, value)
+        return storage._get(key)
+
+    if req.query["method"] == "get": 
+        key = req.query["key"] 
+        return storage._get(key)
+
+    if req.query["method"] == "list": 
+        return storage._list("", 10000, None)
+    
+    if req.query["method"] == "delete": 
+        key = req.query["key"] 
+        deleted = storage._delete(key)
+        return {"deleted": bool(deleted)}
