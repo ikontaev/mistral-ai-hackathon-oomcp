@@ -1,6 +1,6 @@
 services:
   app:
-    image: ghcr.io/ikontaev/mistral-ai-hackathon-oomcp:sha-8880bc4
+    image: ghcr.io/ikontaev/mistral-ai-hackathon-oomcp:sha-0e71508
     container_name: app
     restart: unless-stopped
     build:
