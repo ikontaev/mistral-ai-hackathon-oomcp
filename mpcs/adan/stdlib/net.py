@@ -20,8 +20,8 @@ def register(mcp):
             return f"❌ Error checking port: {str(e)}"
 
     @mcp.tool
-    def start_http_server(port: int = 8080, directory: str = ".") -> str:
-        """Start a simple HTTP server in the background"""
+    def start_web_server(port: int = 8080, directory: str = ".") -> str:
+        """Start a simple web server in the background with fallback to index.html"""
         try:
             def run_server():
                 os.chdir(directory)
