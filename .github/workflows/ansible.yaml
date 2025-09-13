@@ -31,3 +31,4 @@ jobs:
             142.132.227.145 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJGfYp8ib7Sae4g4Ndpnl5B8kT7aC3qRdoJ7NqycfkSc
           options: |
             --inventory hosts
+            --user=root
