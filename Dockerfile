@@ -1,12 +1,23 @@
-FROM python:3.12-slim
+FROM python:3.13-slim
+
+# Install required dependencies
+RUN apt-get update && \
+    apt-get install -y curl git && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install uv using pip
+RUN pip install uv
 
 WORKDIR /app
 
-# Install and use uv in single command
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
-    ~/.cargo/bin/uv pip install --system -e /app/mpcs/adan
+# Copy requirements first
+COPY mpcs/adan/pyproject.toml mpcs/adan/
+COPY mpcs/adan/uv.lock mpcs/adan/
 
-# Copy all files after dependencies are installed
+# Install dependencies
+RUN uv pip install --system -e /app/mpcs/adan
+
+# Copy the rest of the application
 COPY . /app
 
 EXPOSE 8000
