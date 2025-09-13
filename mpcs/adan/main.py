@@ -20,7 +20,7 @@ stdlib.net.register(mcp)
 stdlib.python.register(mcp)
 stdlib.os.register(mcp)
 jpyter.jupyter.register(mcp)
-
+stdlib.generators.register(mcp)
 
 @mcp.tool
 def hello(name: str) -> str:
