@@ -38,11 +38,10 @@ services:
       - HCLOUD_TOKEN={{ hcloud_token | default('default_fallback_token', true) }}
     volumes:
       - {{ app_data_path }}:/app/data
-      - shared_data:/app
       - /opt/{{ app_name }}/.ssh:/root/.ssh:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.app.rule=Host(`mcp4.ethux.net`)"
+      - "traefik.http.routers.app.rule=Host(`mcp5.ethux.net`)"
       - "traefik.http.routers.app.entrypoints=websecure"
       - "traefik.http.routers.app.tls.certresolver=myresolver"
       - "traefik.http.services.app.loadbalancer.server.port={{ app_port }}"
@@ -64,7 +63,6 @@ services:
       - JUPYTER_TOKEN={{ jupyter_token | default('default_fallback_token', true) }}
     volumes:
       - jupyter_data:/home/jupyter/work
-      - shared_data:/home/jupyter/shared
       - {{ app_data_path }}:/home/jupyter/app
     command: >
       start-notebook.sh --allow-root
@@ -101,7 +99,6 @@ services:
 
 volumes:
   jupyter_data:
-  shared_data:
 
 networks:
   app_network:
