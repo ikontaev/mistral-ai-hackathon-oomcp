@@ -22,6 +22,7 @@ stdlib.jpter.register(mcp)
 stdlib.generators.register(mcp)
 stdlib.storage.register(mcp)
 stdlib.hetzner.register(mcp)
+stdlib.comms.register(mcp)
 
 @mcp.tool
 def hello(name: str) -> str:

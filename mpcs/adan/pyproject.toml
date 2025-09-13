@@ -7,4 +7,5 @@ requires-python = ">=3.13"
 dependencies = [
     "fastmcp>=2.12.3",
     "hcloud>=2.6.0",
+    "resend>=2.13.1",
 ]
