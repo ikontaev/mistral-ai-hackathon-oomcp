@@ -9,16 +9,24 @@ from fastmcp import FastMCP
 
 mcp = FastMCP("OOMCP")
 
-# map of spaces 
-CONFIG = {
-    "root_path": "../..", 
-    "space_path": "../../spaces/random", 
-    "children": []
-}
-if not os.path.exists(CONFIG["space_path"]):
-    os.mkdir(CONFIG["space_path"])
+# Determine root path based on environment
+if os.environ.get('DOCKER_ENV'):
+    # Running in Docker container
+    CONFIG = {
+        "root_path": "/app",
+        "space_path": "/app/spaces/random",
+        "children": []
+    }
 else:
-    print(f"Directory '{CONFIG['space_path']}' already exists.")
+    # Running locally
+    CONFIG = {
+        "root_path": "../..",
+        "space_path": "../../spaces/random",
+        "children": []
+    }
+# Create space directory if it doesn't exist
+os.makedirs(CONFIG["space_path"], exist_ok=True)
+print(f"Using space path: {CONFIG['space_path']}")
 
 # load std_lib
 stdlib.hetzner.register(mcp, CONFIG)

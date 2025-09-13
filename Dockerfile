@@ -10,15 +10,18 @@ RUN pip install uv
 
 WORKDIR /app
 
-# Copy requirements first
+# Copy only the requirements files first for better layer caching
 COPY mpcs/adan/pyproject.toml mpcs/adan/
 COPY mpcs/adan/uv.lock mpcs/adan/
 
 # Install dependencies
 RUN uv pip install --system -e /app/mpcs/adan
 
-# Copy the rest of the application
-COPY . /app
+# Copy the rest of the application (including stdlib)
+COPY mpcs/adan/ /app/mpcs/adan/
+
+# Copy other root files if needed (Dockerfile, docker-compose.yml, etc.)
+COPY . /app/
 
 EXPOSE 8000
 CMD ["python", "/app/mpcs/adan/main.py"]
