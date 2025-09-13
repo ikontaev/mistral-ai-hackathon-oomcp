@@ -121,10 +121,19 @@ def register(mcp, config):
                         return full
                 return None
 
-            def _run_handler(file_path: str, req: Request):
+            def _run_handler(raw_path_endpoint: str, file_path: str, req: Request):
                 with open(file_path, "r", encoding="utf-8") as f:
                     code = f.read()
-                ns = {}
+                
+                module_name = "spaces.random.routes." + raw_path_endpoint
+                package_name = "spaces.random.routes"
+
+                ns = {
+                    "__builtins__": __builtins__,
+                    "__name__": module_name,
+                    "__package__": package_name,
+                    "__file__": str(file_path),
+                }
                 exec(compile(code, file_path, "exec"), ns, ns)
                 if "handle" not in ns or not callable(ns["handle"]):
                     raise RuntimeError(f"Missing handle(req) in {os.path.relpath(file_path)}")
@@ -178,7 +187,7 @@ def register(mcp, config):
                         req = Request(self)
                         route_file = _resolve_first_level_route(req.method, req.path)
                         if route_file:
-                            result = _run_handler(route_file, req)
+                            result = _run_handler(req.path[1:], route_file, req)
                             headers = {}
                             if isinstance(result, tuple) and len(result) in (2, 3):
                                 status = int(result[0])

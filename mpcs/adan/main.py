@@ -26,6 +26,7 @@ else:
         "space_path": "../../spaces/random",
         "children": []
     }
+
 # Create space directory if it doesn't exist
 os.makedirs(CONFIG["space_path"], exist_ok=True)
 print(f"Using space path: {CONFIG['space_path']}")

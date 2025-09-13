@@ -3,7 +3,9 @@ import os
 import json
 from typing import Optional
 
-def _ensure_db(db_path: str):
+default_db_path = os.path.join(os.getcwd(), "..", "..", "data", "dbs")
+
+def _ensure_db(db_path: str = default_db_path):
     os.makedirs(os.path.dirname(db_path) or ".", exist_ok=True)
     with sqlite3.connect(db_path) as conn:
         conn.execute("""
@@ -37,7 +39,7 @@ def _delete(db_path: str, key: str) -> bool:
         conn.commit()
         return cur.rowcount > 0  # True si eliminó algo
 
-def _list(db_path: str, prefix: str, limit: int, start_after: Optional[str]):
+def _list(db_path: str , prefix: str, limit: int, start_after: Optional[str]):
     _ensure_db(db_path)
     params = []
     where = "WHERE 1=1"
