@@ -26,17 +26,21 @@ services:
       - "8888:8888"
     environment:
       - NB_USER=root
-      # Configuration via environment variables
-      - JUPYTER_NOTEBOOK_ALLOW_ORIGIN=*
-      - JUPYTER_NOTEBOOK_DISABLE_CHECK_XSRF=True
-      - JUPYTER_NOTEBOOK_BASE_URL=/jupyter
     volumes:
       - jupyter_data:/home/jupyter/work
     command: >
       jupyter notebook
-      --NotebookApp.allow_origin='*'
-      --NotebookApp.disable_check_xsrf=True
-      --NotebookApp.base_url=/jupyter
+      --ip=0.0.0.0
+      --port=8888
+      --ServerApp.allow_remote_access=True
+      --ServerApp.allow_origin='*'
+      --ServerApp.trust_xheaders=True
+      --ServerApp.disable_check_xsrf=True
+      --ServerApp.tornado_settings='{
+        "headers": {
+          "Content-Security-Policy": "frame-ancestors *"
+        }
+      }'
     networks:
       - app_network
 
