@@ -11,6 +11,7 @@ mcp = FastMCP("OOMCP")
 
 # map of spaces 
 CONFIG = {
+    "root_path": "../..", 
     "space_path": "../../spaces/random", 
     "children": []
 }

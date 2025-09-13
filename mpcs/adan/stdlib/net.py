@@ -7,6 +7,7 @@ import httpx
 import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
+import shutil
 
 def register(mcp, config): 
     @mcp.tool
@@ -52,10 +53,13 @@ def register(mcp, config):
     def start_http_server(port: int = 8080) -> str:
         """Start a minimal HTTP server that loads 1st-level routes from a directory."""
         try:
+            # prepare routing system
             routes_dir = config["space_path"] + "/routes"
+            handler_template = os.path.join(config["root_path"], "data/templates/api_handler.template")
             os.makedirs(routes_dir, exist_ok=True)
+            shutil.copy(handler_template, os.path.join(routes_dir, "__default__.py"))
 
-            # comprobar puerto
+            # check port
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 if s.connect_ex(("localhost", port)) == 0:
                     return f"❌ Port {port} is already in use"
@@ -104,7 +108,7 @@ def register(mcp, config):
                 """
                 name = path.strip("/")
                 if name == "":
-                    name = "index"
+                    name = "__default__"
 
                 # solo primer nivel: rechazar si contiene más '/'
                 if "/" in name or "\\" in name or name.startswith(".") or ".." in name:
