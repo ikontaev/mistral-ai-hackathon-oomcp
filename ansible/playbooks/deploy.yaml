@@ -112,7 +112,6 @@
         state: present
         pull: always
         recreate: always
-        build: no
 
     - name: Verify container is running
       ansible.builtin.uri:
