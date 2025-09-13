@@ -10,16 +10,18 @@
       ansible.builtin.set_fact:
         app_data_path: "/opt/{{ app_name }}/data"
 
-    - name: Install required system packages
+    - name: Update apt package index
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install prerequisites
       ansible.builtin.apt:
         name:
-          - apt-transport-https
           - ca-certificates
           - curl
           - gnupg
-          - software-properties-common
+          - lsb-release
         state: present
-        update_cache: true
 
     - name: Create keyrings directory
       ansible.builtin.file:
@@ -33,14 +35,24 @@
         dest: /etc/apt/keyrings/docker.asc
         mode: '0644'
 
+    - name: Get Ubuntu codename
+      ansible.builtin.command: . /etc/os-release && echo "$UBUNTU_CODENAME"
+      register: ubuntu_codename
+      changed_when: false
+
     - name: Add Docker repository
       ansible.builtin.apt_repository:
         repo: >-
           deb [arch={{ ansible_architecture }} signed-by=/etc/apt/keyrings/docker.asc]
           https://download.docker.com/linux/ubuntu
-          {{ ansible_distribution_release }} stable
+          {{ ubuntu_codename.stdout }} stable
         state: present
         filename: docker
+        update_cache: yes
+
+    - name: Update apt package index again
+      ansible.builtin.apt:
+        update_cache: yes
 
     - name: Install Docker packages
       ansible.builtin.apt:
@@ -51,7 +63,6 @@
           - docker-buildx-plugin
           - docker-compose-plugin
         state: present
-        update_cache: yes
 
     - name: Ensure Docker is running and enabled
       ansible.builtin.service:
