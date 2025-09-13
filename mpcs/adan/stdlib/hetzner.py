@@ -434,7 +434,7 @@ docker rm {image_name} 2>/dev/null || true
 
 # Run new container
 echo "▶️ Starting new container..."
-docker run -d --name {image_name} -p {port_mapping} --restart unless-stopped {image_name}
+docker run -d --name {image_name} -p {port_mapping} -e HCLOUD_TOKEN={hcloud_token} --restart unless-stopped {image_name}
 
 echo "✅ Deployment complete!"
 echo "🌐 Application accessible at http://{server_ip}:{port_mapping.split(":")[0]}"
