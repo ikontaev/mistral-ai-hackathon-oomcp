@@ -4,5 +4,6 @@ from . import python
 from . import os
 from . import generators
 from . import storage
+from . import comms
 
-__all__ = ["fs", "net", "python", "os", "generators", "storage"]
+__all__ = ["fs", "net", "python", "os", "generators", "storage", "comms"]
