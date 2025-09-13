@@ -11,7 +11,6 @@ from hcloud.images import Image
 from hcloud.server_types import ServerType
 from pydantic import BaseModel, Field
 
-
 class DeployConfig(BaseModel):
     """Configuration for deployment"""
 
