@@ -238,6 +238,8 @@ def register(mcp, config):
             def handle(req):
                 # here return anything wanted
             ```
+        
+        the http server endpoint is created within this tool
         """
         try:
             routes_dir = os.path.join(config["space_path"], "routes", endpoint+".py")
