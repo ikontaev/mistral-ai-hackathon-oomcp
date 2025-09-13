@@ -6,7 +6,7 @@ import json
 import time
 from typing import Optional, Dict, Any, List, Union
 
-def register(mcp: FastMCP):
+def register(mcp: FastMCP, config):
     """Register Jupyter API tools with MCP server"""
     # Use internal URL when running inside docker network, external URL when accessing from outside
     jupyter_url = os.getenv("INTERNAL_JUPYTER_URL", os.getenv("JUPYTER_URL", "http://localhost:8888"))

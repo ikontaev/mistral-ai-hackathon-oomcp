@@ -8,7 +8,7 @@ from typing import Union, List
 
 
 
-def register(mcp): 
+def register(mcp, config): 
     @mcp.tool
     def send_email(
         to: Union[str, List[str]] = "noreplycristiansanchez@gmail.com",

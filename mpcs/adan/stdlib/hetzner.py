@@ -6,7 +6,7 @@ from hcloud.images import Image
 import os
 from typing import Optional, List, Dict, Union
 
-def register(mcp: FastMCP):
+def register(mcp: FastMCP, config):
     # Initialize Hetzner Cloud client
     hcloud_token = os.getenv("HCLOUD_TOKEN")
     if not hcloud_token:

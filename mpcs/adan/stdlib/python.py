@@ -4,7 +4,7 @@ from pathlib import Path
 import sys
 import os
 
-def register(mcp):    
+def register(mcp, config):    
     @mcp.tool
     def run_python(code: str, cwd: str = None) -> str:
         """Execute python code and return the output"""

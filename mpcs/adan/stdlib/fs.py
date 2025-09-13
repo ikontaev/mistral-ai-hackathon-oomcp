@@ -11,7 +11,7 @@ import socket
 from threading import Thread
 import time
 
-def register(mcp): 
+def register(mcp, config): 
     @mcp.tool
     def create_file(filepath: str, content: str) -> str:
         """Create a new file with specified content"""
