@@ -1,1 +1,0 @@
-# mistral-ai-hackathon-oomcp
