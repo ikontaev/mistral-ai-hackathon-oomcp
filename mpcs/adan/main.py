@@ -13,6 +13,8 @@ from pathlib import Path
 from threading import Thread
 from typing import Any, Dict
 
+import httpx
+
 from fastmcp import FastMCP
 
 mcp = FastMCP("OOMCP")
@@ -351,6 +353,48 @@ def get_file_info(filepath: str) -> str:
         )
     except Exception as e:
         return f"❌ Error getting file info: {str(e)}"
+
+
+@mcp.tool
+def fetch(url: str, method: str = "GET", headers: str = None, data: str = None) -> str:
+    """Fetch data from a URL using httpx - returns response as text"""
+    try:
+        # Parse headers if provided (JSON string format)
+        request_headers = {}
+        if headers:
+            try:
+                request_headers = json.loads(headers)
+            except json.JSONDecodeError:
+                return "❌ Error: headers must be valid JSON string"
+
+        # Parse data if provided
+        request_data = None
+        if data:
+            request_data = data
+
+        # Make request with httpx
+        with httpx.Client(timeout=30.0) as client:
+            response = client.request(
+                method=method.upper(),
+                url=url,
+                headers=request_headers,
+                content=request_data
+            )
+
+        content = response.text
+        result = {
+            "status": response.status_code,
+            "headers": dict(response.headers),
+            "content": content[:5000] + "..." if len(content) > 5000 else content,
+            "content_length": len(content)
+        }
+
+        return f"✔️ Fetch successful:\n{json.dumps(result, indent=2)}"
+
+    except httpx.HTTPError as e:
+        return f"❌ HTTP Error: {str(e)}"
+    except Exception as e:
+        return f"❌ Error fetching URL: {str(e)}"
 
 
 @mcp.tool
