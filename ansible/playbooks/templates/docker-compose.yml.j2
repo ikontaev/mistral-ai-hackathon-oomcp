@@ -47,16 +47,21 @@ services:
   jupyter:
     image: jupyter/datascience-notebook:x86_64-ubuntu-22.04
     container_name: jupyter_notebook
+    user: root
     restart: unless-stopped
     working_dir: /home/jupyter/app
     environment:
       - NB_USER=root
+      - NB_UID=0
+      - NB_GID=0
+      - CHOWN_HOME=yes
+      - CHOWN_HOME_OPTS=-R
     volumes:
       - jupyter_data:/home/jupyter/work
       - shared_data:/home/jupyter/shared
       - {{ app_data_path }}:/home/jupyter/app
     command: >
-      jupyter notebook
+      start-notebook.sh --allow-root
       --ip=0.0.0.0
       --port=8888
       --notebook-dir=/home/jupyter/app
