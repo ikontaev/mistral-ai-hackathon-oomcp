@@ -1,14 +1,19 @@
-# Use an official Python runtime as a parent image
-FROM python:3.9-slim
+FROM python:3.12-slim
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /mpcs/adan
+# Install uv using the official install script
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Make port 80 available to the world outside this container
+# Copy requirements first for better layer caching
+COPY mpcs/adan/pyproject.toml mpcs/adan/
+COPY mpcs/adan/uv.lock mpcs/adan/
+
+# Install dependencies using uv
+RUN ~/.cargo/bin/uv pip install --system -e /app/mpcs/adan
+
+# Copy the rest of the application
+COPY . /app
+
 EXPOSE 8000
-
-# Run app.py when the container launches
-CMD ["python", "main.py"]
+CMD ["python", "/app/mpcs/adan/main.py"]
