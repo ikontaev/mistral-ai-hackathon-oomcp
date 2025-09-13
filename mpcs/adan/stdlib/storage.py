@@ -30,6 +30,13 @@ def _get(db_path: str, key: str) -> Optional[str]:
         row = cur.fetchone()
         return None if row is None else row[0]
 
+def _delete(db_path: str, key: str) -> bool:
+    _ensure_db(db_path)
+    with sqlite3.connect(db_path) as conn:
+        cur = conn.execute("DELETE FROM kv WHERE key=?", (key,))
+        conn.commit()
+        return cur.rowcount > 0  # True si eliminó algo
+
 def _list(db_path: str, prefix: str, limit: int, start_after: Optional[str]):
     _ensure_db(db_path)
     params = []
@@ -79,6 +86,18 @@ def register(mcp, config):
             return json.dumps({"found": val is not None, "value": val}, ensure_ascii=False)
         except Exception as e:
             return f"❌ get error: {e}"
+
+    @mcp.tool
+    def delete(key: str, db_path: str = "kv.db") -> str:
+        """delete an entry from the storage system with the provided key"""
+        try:
+            deleted = _delete(db_path, key)
+            if deleted:
+                return f"✔️ delete key='{key}'"
+            else:
+                return f"⚠️ key='{key}' not found"
+        except Exception as e:
+            return f"❌ delete error: {e}"
 
     @mcp.tool
     def list(prefix: str = "", limit: int = 100, start_after: str | None = None, db_path: str = "kv.db") -> str:
