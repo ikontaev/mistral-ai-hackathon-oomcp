@@ -26,12 +26,29 @@ def register(mcp: FastMCP):
     ) -> str:
         """Create a new Hetzner Cloud server"""
         try:
+            # Convert SSH key names/IDs to SSH key objects if provided
+            ssh_key_objects = None
+            if ssh_keys:
+                ssh_key_objects = []
+                for key_identifier in ssh_keys:
+                    try:
+                        # Try to get by ID first
+                        key = client.ssh_keys.get_by_id(int(key_identifier))
+                    except:
+                        try:
+                            # If not an ID, try to get by name
+                            key = client.ssh_keys.get_by_name(key_identifier)
+                        except:
+                            continue
+                    if key:
+                        ssh_key_objects.append(key)
+
             response = client.servers.create(
                 name=name,
                 server_type=ServerType(name=server_type),
                 image=Image(name=image),
                 location=location,
-                ssh_keys=ssh_keys,
+                ssh_keys=ssh_key_objects,
                 user_data=user_data,
                 labels=labels
             )
