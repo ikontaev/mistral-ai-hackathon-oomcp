@@ -19,7 +19,7 @@ jobs:
           echo "[all]" > hosts
           echo "142.132.227.145" >> hosts
 
-      - name: Run playbook
+      - name: Run playbook with Jupyter token
         uses: dawidd6/action-ansible-playbook@v2
         with:
           playbook: ansible/playbooks/deploy.yaml
@@ -30,3 +30,4 @@ jobs:
           options: |
             --inventory hosts
             --user=root
+            --extra-vars "jupyter_token=${{ secrets.JUPYTER_TOKEN }}"
