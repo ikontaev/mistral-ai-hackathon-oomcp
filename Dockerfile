@@ -11,11 +11,11 @@ RUN pip install uv
 WORKDIR /app
 
 # Copy requirements first
-COPY mpcs/adan/pyproject.toml adan/
-COPY mpcs/adan/uv.lock adan/
+COPY mpcs/adan/pyproject.toml mpcs/adan/
+COPY mpcs/adan/uv.lock mpcs/adan/
 
 # Install dependencies
-RUN uv pip install --system -e /app/adan
+RUN uv pip install --system -e /app/mpcs/adan
 
 # Copy the rest of the application
 COPY . /app
