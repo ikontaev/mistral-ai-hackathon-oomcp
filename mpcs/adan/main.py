@@ -9,6 +9,9 @@ import os
 
 from fastmcp import FastMCP
 
+# Import the Qdrant tool selector
+import qdrant_tool_selector
+
 mcp = FastMCP("OOMCP")
 
 # Determine root path based on environment
@@ -31,7 +34,7 @@ else:
 os.makedirs(CONFIG["space_path"], exist_ok=True)
 print(f"Using space path: {CONFIG['space_path']}")
 
-# load std_lib
+# Load standard library modules
 stdlib.hetzner.register(mcp, CONFIG)
 stdlib.fs.register(mcp, CONFIG)
 stdlib.jpter.register(mcp, CONFIG)
@@ -75,6 +78,15 @@ def jupyter_iframe() -> str:
     </iframe>
 </body>
 </html>"""
+
+# 🧠 Register the Qdrant RAG tool selector
+print("🚀 Initializing Qdrant RAG Tool Selector...")
+try:
+    qdrant_tool_selector.register(mcp, CONFIG)
+    print("✅ Qdrant RAG Tool Selector activated!")
+except Exception as e:
+    print(f"⚠️  Qdrant RAG initialization failed: {e}")
+    print("💡 Install dependencies: pip install qdrant-client sentence-transformers")
 
 @mcp.tool
 def hello(name: str) -> str:
