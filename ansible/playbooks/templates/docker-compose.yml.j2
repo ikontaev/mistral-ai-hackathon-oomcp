@@ -38,6 +38,8 @@ services:
     volumes:
       - {{ app_data_path }}:/app/data
       - shared_data:/app
+      - /opt/{{ app_name }}/.ssh:/root/.ssh:ro
+    command: sh -c "/app/setup-ssh.sh && your-normal-start-command"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.app.rule=Host(`mcp.ethux.net`)"

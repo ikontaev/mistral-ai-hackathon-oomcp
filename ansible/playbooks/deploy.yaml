@@ -85,6 +85,31 @@
         - "/opt/{{ app_name }}"
         - "{{ app_data_path }}"
 
+    - name: Create SSH directory structure
+      ansible.builtin.file:
+        path: "/opt/{{ app_name }}/.ssh"
+        state: directory
+        mode: '0700'
+
+    - name: Create SSH private key file
+      ansible.builtin.copy:
+        content: "{{ ssh_private_key }}"
+        dest: "/opt/{{ app_name }}/.ssh/id_ed25519"
+        mode: '0600'
+      no_log: true
+      when: ssh_private_key is defined
+
+    - name: Create minimal SSH config
+      ansible.builtin.copy:
+        dest: "/opt/{{ app_name }}/.ssh/config"
+        content: |
+          Host *
+            StrictHostKeyChecking no
+            UserKnownHostsFile=/dev/null
+            IdentityFile ~/.ssh/id_ed25519
+        mode: '0600'
+      when: ssh_private_key is defined
+
     - name: Stop and remove existing containers
       community.docker.docker_compose_v2:
         project_src: "/opt/{{ app_name }}"
