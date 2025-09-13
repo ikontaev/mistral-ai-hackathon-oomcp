@@ -12,6 +12,7 @@ import time
 from pathlib import Path
 import sys
 import stdlib
+import jpyter
 from threading import Thread
 from typing import Any, Dict
 
@@ -30,6 +31,8 @@ stdlib.fs.register(mcp)
 stdlib.net.register(mcp)
 stdlib.python.register(mcp)
 stdlib.os.register(mcp)
+jpyter.jupyter.register(mcp)
+
 
 @mcp.tool
 def hello(name: str) -> str:
