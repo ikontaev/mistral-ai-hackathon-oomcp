@@ -3,5 +3,6 @@ from . import net
 from . import python
 from . import os
 from . import generators
+from . import storage
 
-__all__ = ["fs", "net", "python", "os", "generators"]
+__all__ = ["fs", "net", "python", "os", "generators", "storage"]
