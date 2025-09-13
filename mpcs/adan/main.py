@@ -3,6 +3,8 @@ import csv
 import stdlib
 from threading import Thread
 from typing import Any, Dict
+from fastmcp import Client
+import asyncio
 import os
 
 from fastmcp import FastMCP
@@ -86,7 +88,44 @@ def read_csv(csv_content_base64: str, max_preview_rows: int = 5) -> str:
         lines.append(", ".join(r))
     return "\n".join(lines)
 
+async def list_tools():
+    """List all available tools using FastMCP client"""
+    try:
+        async with Client("http://localhost:8000/mcp") as client:
+            tools = await client.list_tools()
+            print("\nAvailable MCP Tools:")
+            for tool in tools:
+                # Access tool properties directly
+                print(f"  - {tool.name}: {tool.description}")
+                print(f"    Schema: {tool.schema}")
+            return tools
+    except Exception as e:
+        print(f"Error listing tools: {e}")
+        return []
+
+def run_server():
+    """Run the MCP server"""
+    mcp.run(transport="http", host="0.0.0.0", port=8000)
 
 if __name__ == "__main__":
     print(f"\n\n hello, friend. \n\n")
-    mcp.run(transport="http", host="0.0.0.0", port=8000)
+    print(f"Using space path: {CONFIG['space_path']}")
+
+    # Start server in a separate thread
+    import threading
+    server_thread = threading.Thread(target=run_server, daemon=True)
+    server_thread.start()
+
+    # Give server time to start
+    import time
+    time.sleep(2)
+
+    # List available tools
+    asyncio.run(list_tools())
+
+    # Keep the main thread alive
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("\nServer stopped")
