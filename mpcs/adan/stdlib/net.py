@@ -229,6 +229,26 @@ def register(mcp, config):
             return f"❌ Error starting HTTP server: {e}"
 
     @mcp.tool
+    def generate_http_server_endpoint(endpoint: str = "__default__", code: str = "def handle(req): return {\"ok\": True, \"msg\": \"default endpoint\"}") -> str:
+        """
+        generate a endpoint for an http server with the following params:
+        endpoint: single string with the endpoint of the server 
+        code: a python code with the following structure
+            ```
+            def handle(req):
+                # here return anything wanted
+            ```
+        """
+        try:
+            routes_dir = os.path.join(config["space_path"], "routes", endpoint+".py")
+            with open(routes_dir, 'w', encoding='utf-8') as f:
+                f.write(code)
+            return endpoint 
+        except Exception as e:
+            return f"❌ Error starting generating endpoint: {e}"
+ 
+
+    @mcp.tool
     def fetch(url: str, method: str = "GET", headers: str = None, data: str = None) -> str:
         """Fetch data from a URL using httpx - returns response as text"""
         try:
