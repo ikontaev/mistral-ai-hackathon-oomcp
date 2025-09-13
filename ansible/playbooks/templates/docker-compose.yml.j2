@@ -1,10 +1,30 @@
 services:
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=support@ethux.net"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
+    networks:
+      - app_network
+
   {{ app_name }}:
     image: {{ docker_image }}
     container_name: {{ app_name }}
     restart: unless-stopped
-    ports:
-      - "{{ app_port }}:{{ app_port }}"
     environment:
       - NODE_ENV=production
     volumes:
@@ -15,6 +35,12 @@ services:
       timeout: 10s
       retries: 3
       start_period: 5s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.{{ app_name }}.rule=Host(`mcp.ethux.org`)"
+      - "traefik.http.routers.{{ app_name }}.entrypoints=websecure"
+      - "traefik.http.routers.{{ app_name }}.tls.certresolver=myresolver"
+      - "traefik.http.services.{{ app_name }}.loadbalancer.server.port={{ app_port }}"
     networks:
       - app_network
 
@@ -22,8 +48,6 @@ services:
     image: jupyter/datascience-notebook:x86_64-ubuntu-22.04
     container_name: jupyter_notebook
     restart: unless-stopped
-    ports:
-      - "8888:8888"
     environment:
       - NB_USER=root
     volumes:
@@ -41,6 +65,14 @@ services:
           "Content-Security-Policy": "frame-ancestors *"
         }
       }'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jupyter.rule=Host(`jupyter.ethux.org`)"
+      - "traefik.http.routers.jupyter.entrypoints=websecure"
+      - "traefik.http.routers.jupyter.tls.certresolver=myresolver"
+      - "traefik.http.services.jupyter.loadbalancer.server.port=8888"
+      - "traefik.http.middlewares.jupyter-stripprefix.stripprefix.prefixes=/jupyter"
+      - "traefik.http.routers.jupyter.middlewares=jupyter-stripprefix"
     networks:
       - app_network
 
