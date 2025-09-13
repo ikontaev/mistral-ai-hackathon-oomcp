@@ -258,6 +258,29 @@ def register(mcp, config):
         except Exception as e:
             return f"❌ Error starting generating endpoint: {e}"
  
+    @mcp.tool
+    def generate_http_object_autocrud(object: str = "object") -> str:
+        """
+        generate a endpoint that enables autocrud for an object for the 
+        http server with the following params:
+        object: single string with the object name of the server 
+        
+        the http server endpoint is created within this tool
+        """
+        try:
+            object_autocrud_template = os.path.join(config["root_path"], "data", "templates", "autocrud.template")
+            routes_dir = os.path.join(config["space_path"], "routes", object+".py")
+
+            with open(object_autocrud_template, 'r', encoding='utf-8') as f:
+                content = f.read()
+
+            with open(routes_dir, 'w', encoding='utf-8') as f:
+                f.write(content)
+            return object
+        except Exception as e:
+            return f"❌ Error starting generating endpoint: {e}"
+
+ 
 
     @mcp.tool
     def fetch(url: str, method: str = "GET", headers: str = None, data: str = None) -> str:
