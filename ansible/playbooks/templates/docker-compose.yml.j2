@@ -36,6 +36,8 @@ services:
       - INTERNAL_JUPYTER_URL=http://jupyter:8888
       - INTERNAL_JUPYTER_TOKEN={{ jupyter_token | default('default_fallback_token', true) }}
       - HCLOUD_TOKEN={{ hcloud_token | default('default_fallback_token', true) }}
+      - QDRANT_URL={{ lookup('env', 'QDRANT_URL') }}
+      - QDRANT_API_KEY={{ lookup('env', 'QDRANT_API_KEY') }}
     volumes:
       - {{ app_data_path }}:/app/data
       - /opt/{{ app_name }}/.ssh:/root/.ssh:ro

@@ -10,6 +10,8 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
 from sentence_transformers import SentenceTransformer
 
+COLLECTION_NAME="oomcp_tools"
+EMBEDDING_MODEL="sentence-transformers/all-MiniLM-L6-v2"
 
 @dataclass
 class ToolMetadata:
