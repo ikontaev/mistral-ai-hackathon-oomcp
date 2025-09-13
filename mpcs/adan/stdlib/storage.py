@@ -60,7 +60,7 @@ def _list(db_path: str, prefix: str, limit: int, start_after: Optional[str]):
     items = [{"key": k, "value": v} for (k, v) in rows]
     return {"items": items, "next_start_after": next_start_after, "has_more": has_more}
 
-def register(mcp):
+def register(mcp, config):
 
     @mcp.tool
     def put(key: str, value: str, db_path: str = "kv.db") -> str:

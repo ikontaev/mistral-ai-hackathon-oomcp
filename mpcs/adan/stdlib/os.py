@@ -11,7 +11,7 @@ import socket
 from threading import Thread
 import time
 
-def register(mcp): 
+def register(mcp, config): 
     @mcp.tool
     def run_shell(command: str, cwd: str = None) -> str:
         """Execute shell command and return output"""

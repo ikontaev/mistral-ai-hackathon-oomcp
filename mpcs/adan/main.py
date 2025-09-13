@@ -3,6 +3,7 @@ import csv
 import stdlib
 from threading import Thread
 from typing import Any, Dict
+import os
 
 from fastmcp import FastMCP
 
@@ -10,19 +11,24 @@ mcp = FastMCP("OOMCP")
 
 # map of spaces 
 CONFIG = {
+    "space_path": "../../spaces/random", 
     "children": []
 }
+if not os.path.exists(CONFIG["space_path"]):
+    os.mkdir(CONFIG["space_path"])
+else:
+    print(f"Directory '{CONFIG['space_path']}' already exists.")
 
 # load std_lib
-stdlib.fs.register(mcp)
-stdlib.net.register(mcp)
-stdlib.python.register(mcp)
-stdlib.os.register(mcp)
-stdlib.jpter.register(mcp)
-stdlib.generators.register(mcp)
-stdlib.storage.register(mcp)
-stdlib.hetzner.register(mcp)
-stdlib.comms.register(mcp)
+stdlib.hetzner.register(mcp, CONFIG)
+stdlib.fs.register(mcp, CONFIG)
+stdlib.jpter.register(mcp, CONFIG)
+stdlib.net.register(mcp, CONFIG)
+stdlib.python.register(mcp, CONFIG)
+stdlib.os.register(mcp, CONFIG)
+stdlib.generators.register(mcp, CONFIG)
+stdlib.storage.register(mcp, CONFIG)
+stdlib.comms.register(mcp, CONFIG)
 
 @mcp.tool
 def hello(name: str) -> str:

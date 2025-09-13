@@ -1,4 +1,4 @@
-def register(mcp):
+def register(mcp, config):
     @mcp.tool
     def generate_html(title: str, body: str, name: str) -> str:
         """Generate a simple HTML file based on title and body content inside a template and it writes to filesystem with
