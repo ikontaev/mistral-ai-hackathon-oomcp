@@ -42,7 +42,7 @@ services:
       - /opt/{{ app_name }}/.ssh:/root/.ssh:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.app.rule=Host(`mcp.ethux.net`)"
+      - "traefik.http.routers.app.rule=Host(`mcp2.ethux.net`)"
       - "traefik.http.routers.app.entrypoints=websecure"
       - "traefik.http.routers.app.tls.certresolver=myresolver"
       - "traefik.http.services.app.loadbalancer.server.port={{ app_port }}"
