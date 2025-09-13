@@ -41,6 +41,40 @@ stdlib.generators.register(mcp, CONFIG)
 stdlib.storage.register(mcp, CONFIG)
 stdlib.comms.register(mcp, CONFIG)
 
+JUPYTER_TOKEN = os.environ.get("JUPYTER_TOKEN", "")
+
+@mcp.tool
+def jupyter_iframe() -> str:
+    """Return an iframe for JupyterHub embedded view"""
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JupyterHub Embedded View</title>
+    <style>
+        body, html {{
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }}
+        .iframe-container {{
+            width: 100%;
+            height: 100vh;
+            border: none;
+        }}
+    </style>
+</head>
+<body>
+    <iframe
+        class="iframe-container"
+        src="https://jupyter.ethux.net/login?token={JUPYTER_TOKEN}"
+        allowfullscreen>
+    </iframe>
+</body>
+</html>"""
+
 @mcp.tool
 def hello(name: str) -> str:
     """Say hello - basic connectivity test"""
