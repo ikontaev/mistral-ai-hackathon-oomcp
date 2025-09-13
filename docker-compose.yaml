@@ -1,0 +1,73 @@
+services:
+  app:
+    image: ghcr.io/ikontaev/mistral-ai-hackathon-oomcp:sha-8880bc4
+    container_name: app
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=development
+      - JUPYTER_URL=http://jupyter:8888
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN:-default_fallback_token}
+      - HCLOUD_TOKEN=${HCLOUD_TOKEN:-default_fallback_token}
+      - PYTHONUNBUFFERED=1
+      - DEV_MODE=true
+    volumes:
+      - ./data:/app/data
+      - ./mpcs:/app/mpcs
+      - ./data/.ssh:/root/.ssh:ro
+      - shared_data:/app/shared
+    networks:
+      - app_network
+    depends_on:
+      - jupyter
+    command: >
+      sh -c "pip install hcloud &&
+             python -m mpcs.adan.main"
+
+  jupyter:
+    image: jupyter/datascience-notebook:x86_64-ubuntu-22.04
+    container_name: jupyter_notebook
+    user: root
+    restart: unless-stopped
+    environment:
+      - NB_USER=root
+      - NB_UID=0
+      - NB_GID=0
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN:-default_fallback_token}
+      - CHOWN_HOME=yes
+      - CHOWN_HOME_OPTS=-R
+    volumes:
+      - ./notebooks:/home/jupyter/work
+      - shared_data:/home/jupyter/shared
+      - ./mpcs:/home/jupyter/app/mpc
+      - ./data:/home/jupyter/app/data
+    ports:
+      - "8888:8888"
+    command: >
+      start-notebook.sh --allow-root
+      --ip=0.0.0.0
+      --port=8888
+      --notebook-dir=/home/jupyter/work
+      --ServerApp.token=${JUPYTER_TOKEN:-default_fallback_token}
+      --ServerApp.allow_remote_access=True
+      --ServerApp.allow_origin='*'
+      --ServerApp.base_url=/
+      --ServerApp.trust_xheaders=True
+      --ServerApp.disable_check_xsrf=True
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8888/api || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - app_network
+
+volumes:
+  shared_data:
+
+networks:
+  app_network:
+    driver: bridge
