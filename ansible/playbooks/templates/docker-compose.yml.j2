@@ -35,6 +35,7 @@ services:
       - JUPYTER_TOKEN={{ jupyter_token | default('default_fallback_token', true) }}
       - INTERNAL_JUPYTER_URL=http://jupyter:8888
       - INTERNAL_JUPYTER_TOKEN={{ jupyter_token | default('default_fallback_token', true) }}
+      - HCLOUD_TOKEN={{ hcloud_token | default('default_fallback_token', true) }}
     volumes:
       - {{ app_data_path }}:/app/data
       - shared_data:/app

@@ -1,6 +1,6 @@
 ---
 # Docker config
-docker_image: "ghcr.io/ikontaev/mistral-ai-hackathon-oomcp:sha-0492686"
+docker_image: "ghcr.io/ikontaev/mistral-ai-hackathon-oomcp:sha-2271cfe"
 
 # Application config
 app_name: "mistral-ai-hackathon"
