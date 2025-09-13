@@ -26,9 +26,17 @@ services:
       - "8888:8888"
     environment:
       - NB_USER=root
-      #- JUPYTER_TOKEN= # Add secret token in github secrets
+      # Configuration via environment variables
+      - JUPYTER_NOTEBOOK_ALLOW_ORIGIN=*
+      - JUPYTER_NOTEBOOK_DISABLE_CHECK_XSRF=True
+      - JUPYTER_NOTEBOOK_BASE_URL=/jupyter
     volumes:
       - jupyter_data:/home/jupyter/work
+    command: >
+      jupyter notebook
+      --NotebookApp.allow_origin='*'
+      --NotebookApp.disable_check_xsrf=True
+      --NotebookApp.base_url=/jupyter
     networks:
       - app_network
 
