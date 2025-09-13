@@ -110,7 +110,7 @@
       community.docker.docker_compose_v2:
         project_src: "/opt/{{ app_name }}"
         state: present
-        pull: yes
+        pull: always
         recreate: always
         build: no
 
