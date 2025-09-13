@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  {{ app_name }}:
+    image: {{ docker_image }}
+    container_name: {{ app_name }}
+    restart: unless-stopped
+    ports:
+      - "{{ app_port }}:{{ app_port }}"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - {{ app_data_path }}:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:{{ app_port }}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
