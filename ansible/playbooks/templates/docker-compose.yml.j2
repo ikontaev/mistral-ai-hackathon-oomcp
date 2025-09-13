@@ -3,6 +3,8 @@ services:
     image: traefik:v2.10
     container_name: traefik
     command:
+      - "--log.level=DEBUG"
+      - "--accesslog=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
@@ -12,12 +14,15 @@ services:
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--providers.file=true"
+      - "--providers.file.filename=/etc/traefik/dynamic.yml"
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./letsencrypt:/letsencrypt"
+      - "./dynamic.yml:/etc/traefik/dynamic.yml"
     networks:
       - app_network
 
@@ -45,36 +50,43 @@ services:
       - app_network
 
   jupyter:
-      image: jupyter/datascience-notebook:x86_64-ubuntu-22.04
-      container_name: jupyter_notebook
-      restart: unless-stopped
-      environment:
-        - NB_USER=root
-      volumes:
-        - jupyter_data:/home/jupyter/work
-      command: >
-        jupyter notebook
-        --ip=0.0.0.0
-        --port=8888
-        --ServerApp.allow_remote_access=True
-        --ServerApp.allow_origin='*'
-        --ServerApp.trust_xheaders=True
-        --ServerApp.disable_check_xsrf=True
-        --ServerApp.tornado_settings='{
-          "headers": {
-            "Content-Security-Policy": "frame-ancestors *"
-          }
-        }'
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.jupyter.rule=Host(`jupyter.ethux.net`)"
-        - "traefik.http.routers.jupyter.entrypoints=websecure"
-        - "traefik.http.routers.jupyter.tls.certresolver=myresolver"
-        - "traefik.http.services.jupyter.loadbalancer.server.port=8888"
-        - "traefik.http.routers.jupyter.middlewares=jupyter-stripprefix"
-        - "traefik.http.routers.jupyter.priority=10"
-      networks:
-        - app_network
+    image: jupyter/datascience-notebook:x86_64-ubuntu-22.04
+    container_name: jupyter_notebook
+    restart: unless-stopped
+    environment:
+      - NB_USER=root
+    volumes:
+      - jupyter_data:/home/jupyter/work
+    command: >
+      jupyter notebook
+      --ip=0.0.0.0
+      --port=8888
+      --ServerApp.allow_remote_access=True
+      --ServerApp.allow_origin='*'
+      --ServerApp.base_url=/
+      --ServerApp.trust_xheaders=True
+      --ServerApp.disable_check_xsrf=True
+      --ServerApp.tornado_settings='{
+        "headers": {
+          "Content-Security-Policy": "frame-ancestors *"
+        }
+      }'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jupyter.rule=Host(`jupyter.ethux.net`)"
+      - "traefik.http.routers.jupyter.entrypoints=websecure"
+      - "traefik.http.routers.jupyter.tls.certresolver=myresolver"
+      - "traefik.http.services.jupyter.loadbalancer.server.port=8888"
+      - "traefik.http.routers.jupyter.middlewares=jupyter-stripprefix@file"
+      - "traefik.http.routers.jupyter.priority=10"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8888/ || exit 0"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - app_network
 
 volumes:
   jupyter_data:
