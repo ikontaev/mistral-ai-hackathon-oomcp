@@ -26,21 +26,21 @@ services:
     networks:
       - app_network
 
-  {{ app_name }}:
+  app:
     image: {{ docker_image }}
-    container_name: {{ app_name }}
+    container_name: app
     restart: unless-stopped
     environment:
       - NODE_ENV=production
     volumes:
       - {{ app_data_path }}:/app/data
-      - shared_data:/app/shared
+      - shared_data:/app
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.{{ app_name }}.rule=Host(`mcp.ethux.net`)"
-      - "traefik.http.routers.{{ app_name }}.entrypoints=websecure"
-      - "traefik.http.routers.{{ app_name }}.tls.certresolver=myresolver"
-      - "traefik.http.services.{{ app_name }}.loadbalancer.server.port={{ app_port }}"
+      - "traefik.http.routers.app.rule=Host(`mcp.ethux.net`)"
+      - "traefik.http.routers.app.entrypoints=websecure"
+      - "traefik.http.routers.app.tls.certresolver=myresolver"
+      - "traefik.http.services.app.loadbalancer.server.port={{ app_port }}"
     networks:
       - app_network
 
@@ -48,15 +48,18 @@ services:
     image: jupyter/datascience-notebook:x86_64-ubuntu-22.04
     container_name: jupyter_notebook
     restart: unless-stopped
+    working_dir: /home/jupyter/app
     environment:
       - NB_USER=root
     volumes:
       - jupyter_data:/home/jupyter/work
       - shared_data:/home/jupyter/shared
+      - {{ app_data_path }}:/home/jupyter/app
     command: >
       jupyter notebook
       --ip=0.0.0.0
       --port=8888
+      --notebook-dir=/home/jupyter/app
       --ServerApp.allow_remote_access=True
       --ServerApp.allow_origin='*'
       --ServerApp.base_url=/
