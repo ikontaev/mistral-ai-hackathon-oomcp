@@ -24,4 +24,4 @@ COPY mpcs/adan/ /app/mpcs/adan/
 COPY . /app/
 
 EXPOSE 8000
-CMD ["python", "/app/mpcs/adan/main.py"]
+CMD ["uv", "run", "/app/mpcs/adan/main.py"]
