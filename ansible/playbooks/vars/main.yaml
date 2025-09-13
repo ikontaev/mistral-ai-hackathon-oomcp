@@ -1,0 +1,7 @@
+---
+# Docker config
+docker_image: "ghcr.io/ikontaev/mistral-ai-hackathon-oomcp:sha-3b22dfe"
+
+# Application config
+app_name: "mistral-ai-hackathon"
+app_port: 3000

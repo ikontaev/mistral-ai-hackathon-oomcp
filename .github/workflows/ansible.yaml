@@ -7,6 +7,7 @@ on:
     workflows: ["Build and Push Docker Image"]
     types:
       - completed
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -14,22 +15,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Get latest Docker image tag
-        id: get-image
-        run: |
-          IMAGE_TAG=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            "https://ghcr.io/v2/${{ github.repository }}/tags/list" | \
-            jq -r '.tags[] | select(. | contains("sha-"))' | \
-            sort -r | head -n 1)
-
-          if [ -z "$IMAGE_TAG" ]; then
-            echo "::error::No SHA-tagged image found in GHCR!"
-            exit 1
-          fi
-
-          echo "LATEST_IMAGE=ghcr.io/${{ github.repository }}:$IMAGE_TAG" >> $GITHUB_OUTPUT
-          echo "Using image: ghcr.io/${{ github.repository }}:$IMAGE_TAG"
 
       - name: Create hosts file
         run: |
@@ -46,4 +31,3 @@ jobs:
             142.132.227.145 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJGfYp8ib7Sae4g4Ndpnl5B8kT7aC3qRdoJ7NqycfkSc
           options: |
             --inventory hosts
-            --extra-vars "docker_image=${{ steps.get-image.outputs.LATEST_IMAGE }}"

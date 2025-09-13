@@ -2,15 +2,14 @@
 - name: Deploy Docker application
   hosts: all
   become: true
-  vars:
-    app_name: mistral-ai-hackathon
-    docker_compose_version: "1.29.2"
-    docker_compose_path: /usr/local/bin/docker-compose
-    app_port: 3000
-    app_data_path: "/opt/{{ app_name }}/data"
-    compose_template: "templates/docker-compose.yml.j2"
+  vars_files:
+    - vars/main.yaml
 
   tasks:
+    - name: Set app_data_path based on app_name
+      ansible.builtin.set_fact:
+        app_data_path: "/opt/{{ app_name }}/data"
+
     - name: Install required system packages
       ansible.builtin.apt:
         name:
@@ -89,7 +88,7 @@
     - name: Create docker-compose.yml from template
       ansible.builtin.template:
         dest: "/opt/{{ app_name }}/docker-compose.yml"
-        src: "{{ compose_template }}"
+        src: "templates/docker-compose.yml.j2"
         mode: '0644'
 
     - name: Pull Docker image
