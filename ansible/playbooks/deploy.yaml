@@ -91,15 +91,15 @@
         state: directory
         mode: '0700'
 
-    - name: Create SSH private key file from template
-      ansible.builtin.template:
-        src: "templates/id_ed25519.j2"
-        dest: "/opt/{{ app_name }}/.ssh/id_ed25519"
-        mode: '0600'
-        owner: root
-        group: root
-      no_log: true
-      when: ssh_private_key is defined
+    # - name: Create SSH private key file from template
+    #   ansible.builtin.template:
+    #     src: "templates/id_ed25519.j2"
+    #     dest: "/opt/{{ app_name }}/.ssh/id_ed25519"
+    #     mode: '0600'
+    #     owner: root
+    #     group: root
+    #   no_log: true
+    #   when: ssh_private_key is defined
 
     - name: Create minimal SSH config
       ansible.builtin.copy:
