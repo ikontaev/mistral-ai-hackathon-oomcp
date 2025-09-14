@@ -30,4 +30,8 @@ jobs:
           options: |
             --inventory hosts
             --user=root
-            --extra-vars "jupyter_token=${{ secrets.SECRET_JUPYTER_TOKEN }} ssh_private_key=${{ secrets.SSH_PRIVATE_KEY }} hcloud_token=${{ secrets.HCLOUD_TOKEN }}"
+            --extra-vars "
+              jupyter_token=${{ secrets.SECRET_JUPYTER_TOKEN }}
+              hcloud_token=${{ secrets.HCLOUD_TOKEN }}
+              ssh_private_key='${{ secrets.SSH_PRIVATE_KEY }}'
+            "
