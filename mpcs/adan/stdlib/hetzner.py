@@ -246,74 +246,6 @@ def register(mcp: FastMCP, config):
             return f"❌ Error deleting SSH key: {str(e)}"
 
     @mcp.tool
-    def create_firewall(
-        name: str,
-        firewall_type: str = "ipv4",
-        rules: Optional[List[Dict]] = None,
-        labels: Optional[Dict[str, str]] = None,
-    ) -> str:
-        """Create a new firewall"""
-        try:
-            # Convert rules to the format expected by the API
-            api_rules = []
-            if rules:
-                for rule in rules:
-                    api_rules.append(
-                        {
-                            "direction": rule.get("direction", "in"),
-                            "protocol": rule.get("protocol"),
-                            "port": rule.get("port"),
-                            "source_ips": rule.get("source_ips", []),
-                            "destination_ips": rule.get("destination_ips", []),
-                            "description": rule.get("description", ""),
-                        }
-                    )
-
-            response = client.firewalls.create(
-                name=name, firewall_type=firewall_type, labels=labels, apis=api_rules
-            )
-
-            firewall = response.firewall
-            return (
-                f"✅ Firewall created: {firewall.name} (ID: {firewall.id})\n"
-                f"Type: {firewall.firewall_type}"
-            )
-        except Exception as e:
-            return f"❌ Error creating firewall: {str(e)}"
-
-    @mcp.tool
-    def list_firewalls() -> str:
-        """List all firewalls"""
-        try:
-            firewalls = client.firewalls.get_all()
-            if not firewalls:
-                return "ℹ️ No firewalls found"
-
-            result = ["🔥 Firewalls:"]
-            for fw in firewalls:
-                result.append(
-                    f"ID: {fw.id}, Name: {fw.name}, "
-                    f"Type: {fw.firewall_type}, "
-                    f"Created: {fw.created}"
-                )
-            return "\n".join(result)
-        except Exception as e:
-            return f"❌ Error listing firewalls: {str(e)}"
-
-    @mcp.tool
-    def delete_firewall(firewall_id: Union[int, str]) -> str:
-        """Delete a firewall"""
-        try:
-            firewall = client.firewalls.get_by_id(int(firewall_id))
-            if not firewall:
-                return f"❌ Firewall with ID {firewall_id} not found"
-
-            firewall.delete()
-            return f"✅ Firewall {firewall.name} (ID: {firewall.id}) deleted"
-        except Exception as e:
-            return f"❌ Error deleting firewall: {str(e)}"
-
-    @mcp.tool
     def list_server_types() -> str:
         """List available server types"""
         try:
@@ -328,7 +260,6 @@ def register(mcp: FastMCP, config):
                     f"Cores: {st.cores}, "
                     f"Memory: {st.memory}GB, "
                     f"Disk: {st.disk}GB, "
-                    f"Price: {st.prices[0].price_monthly.gross} {st.prices[0].price_monthly.currency}"
                 )
             return "\n".join(result)
         except Exception as e:
