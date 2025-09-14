@@ -37,7 +37,7 @@ print(f"Using space path: {CONFIG['space_path']}")
 # Load standard library modules
 stdlib.hetzner.register(mcp, CONFIG)
 stdlib.fs.register(mcp, CONFIG)
-stdlib.jpter.register(mcp, CONFIG)
+#stdlib.jpter.register(mcp, CONFIG)
 stdlib.net.register(mcp, CONFIG)
 stdlib.python.register(mcp, CONFIG)
 stdlib.os.register(mcp, CONFIG)
